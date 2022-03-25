@@ -2,8 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 import './App.css';
-import {Box, Button, Container} from "@mui/material";
-import {Label} from "@mui/icons-material";
+import {Box, Button, Card, Container, TextField, Typography} from "@mui/material";
 import {useState} from "react";
 
 const firebaseConfig = {
@@ -20,29 +19,53 @@ const auth = getAuth(app)
 
 function App() {
 
+    const [loginEmail, setLoginEmail] = useState("");
+    const [loginPassword, setLoginPassword] = useState("");
     const [loginStatus, setLoginStatus] = useState(0);
+    const [user, setUser] = useState("");
+
+    const loginEmailPassword = async () => {
+
+        // const loginEmail = "tonnytg@gmail.com";
+        // const loginPassword = "banana@123";
+
+        const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+        console.log(userCredential.user);
+        setUser(userCredential.user.email)
+    }
+
 
     const handleLogin = (email, password) => {
         console.log(email. password);
         signInWithEmailAndPassword(auth, email, password)
     }
 
+
   return (
     <div className="App">
+
         <Container>
-                <Box >
-                    <p>Login</p>
-                    <input type="text" id="login" value="email"/>
-                </Box>
-
-            <Box>
-                <p>Password</p>
-                <input type="password" id="password" value="***"/>
+            <Box >
+                <TextField
+                    type="text" label="Login" variant="outlined"
+                    value={loginEmail} onChange={e => setLoginEmail(e.target.value)}
+                />
             </Box>
-            <Button onClick={handleLogin}>Logar</Button>
 
             <Box>
-                <p>{loginStatus}</p>
+                <TextField
+                    type="password" label="Password" variant="outlined"
+                    value={loginPassword} onChange={e => setLoginPassword(e.target.value)}
+                />
+            </Box>
+            <Button onClick={loginEmailPassword}>Logar</Button>
+
+            <Box>
+                <Card variant="outlined">
+                    {
+                        user ? "logado" : "empty"
+                    }
+                </Card>
             </Box>
         </Container>
     </div>
